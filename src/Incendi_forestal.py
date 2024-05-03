@@ -1,16 +1,17 @@
 import numpy as np
-from constants import PENDENT_CREMAR, EN_PROCÉS_CREMAR ,CREMAT
+from constants import PENDENT_CREMAR, EN_PROCÉS_CREMAR ,CREMAT, red_palette, BIOMAS
 import pygame
 import sys
 
 class Incendi_Forestal:
-    def __init__(self, width, height, cell_size, fire_state, vegetation, humidity):
+    def __init__(self, width, height, cell_size, fire_state, vegetation, humidity,bioma):
         self.width = width
         self.height = height
         self.cell_size = cell_size
         self.fire_state = fire_state
         self.vegetation = vegetation
         self.humidity = humidity
+        self.bioma = bioma
         self.max_vegetation = np.max(self.vegetation)
         self.max_humidity = np.max(self.humidity)
 
@@ -21,10 +22,10 @@ class Incendi_Forestal:
 
     def update_world(self):
         burning_cells = np.where(self.fire_state == EN_PROCÉS_CREMAR)
-        self.vegetation[burning_cells] -= 1
-        self.fire_state[burning_cells] = np.where(self.vegetation[burning_cells] <= 0, CREMAT, EN_PROCÉS_CREMAR)
-
         for i, j in zip(*burning_cells):
+            propagation_factor = BIOMAS[self.bioma[i, j]]['propagacion']
+            self.vegetation[i, j] -= propagation_factor
+            self.fire_state[i, j] = CREMAT if self.vegetation[i, j] <= 0 else EN_PROCÉS_CREMAR
             for di in [-1, 0, 1]:
                 for dj in [-1, 0, 1]:
                     ni, nj = i + di, j + dj
@@ -44,7 +45,10 @@ class Incendi_Forestal:
         if self.fire_state[i][j] == CREMAT:
             return (41, 25, 22)
         elif self.fire_state[i][j] == EN_PROCÉS_CREMAR:
-            return (255, 140, 0)
+            indx_fire = int(5*(self.vegetation[i][j] / self.max_vegetation))
+            if indx_fire > 4:
+                indx_fire = 4
+            return red_palette[indx_fire]
         else:
             green_intensity = int(255 * (self.vegetation[i][j] / self.max_vegetation))
             humidity_intensity = int(255 * (self.humidity[i][j] / self.max_humidity))
