@@ -67,11 +67,13 @@ class Incendi_Forestal:
                         max(0, min(255, color[1] - vegetation // 3)),
                         max(0, min(255, color[2] + humidity)))
 
-    def run_simulation(self):
+    def run_simulation(self, num_iterations=False):
         clock = pygame.time.Clock()
         running = True
         paused = False
-        frame_rate = 30 
+        frame_rate = 30
+        iteration_count = 0
+        simulation_complete = False  
 
         while running:
             for event in pygame.event.get():
@@ -79,19 +81,26 @@ class Incendi_Forestal:
                     running = False
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
-                        paused = not paused 
+                        paused = not paused
                     elif event.key == pygame.K_UP:
-                        frame_rate = min(60, frame_rate + 5) 
+                        frame_rate += 5
                     elif event.key == pygame.K_DOWN:
-                        frame_rate = max(5, frame_rate - 5) 
+                        frame_rate = max(5, frame_rate - 5)
 
-            if not paused:
+            if not paused and not simulation_complete:
                 self.update_world()
-                self.screen.fill((0, 0, 0))
-                self.draw_world(self.screen)
-                pygame.display.flip()
+                if num_iterations and iteration_count >= num_iterations:
+                    print(f"Simulación completada después de {iteration_count} iteraciones.")
+                    simulation_complete = True  
 
-            clock.tick(frame_rate) 
+            self.screen.fill((0, 0, 0))
+            self.draw_world(self.screen)
+            pygame.display.flip()
+
+            if not simulation_complete:
+                iteration_count += 1
+
+            clock.tick(frame_rate)
 
         pygame.quit()
         sys.exit()
