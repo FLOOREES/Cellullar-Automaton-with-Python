@@ -50,22 +50,50 @@ class Incendi_Forestal:
                 indx_fire = 4
             return red_palette[indx_fire]
         else:
-            green_intensity = int(255 * (self.vegetation[i][j] / self.max_vegetation))
-            humidity_intensity = int(255 * (self.humidity[i][j] / self.max_humidity))
-            return (0, green_intensity, humidity_intensity // 1.5)
+            bioma = self.bioma[i, j]
+            color = BIOMAS[bioma]['color']
+            vegetation = self.vegetation[i][j]
+            humidity = self.humidity[i][j]
+            if bioma == 'desierto':
+                return (max(0, min(255, color[0] + humidity)),
+                        max(0, min(255, color[1] + humidity)),
+                        max(0, min(255, color[2] - (vegetation//5 + humidity))))
+            elif bioma == 'vegetacion':
+                return (max(0, min(255, color[0] - humidity)),
+                        max(0, min(255, color[1] - vegetation)),
+                        max(0, min(255, color[2] + humidity)))
+            elif bioma == 'selva':
+                return (max(0, min(255, color[0] - humidity // 5)),
+                        max(0, min(255, color[1] - vegetation // 3)),
+                        max(0, min(255, color[2] + humidity)))
 
     def run_simulation(self):
         clock = pygame.time.Clock()
         running = True
+        paused = False
+        frame_rate = 30 
+
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-            self.update_world()
-            self.screen.fill((0, 0, 0))  
-            self.draw_world(self.screen)
-            pygame.display.flip()
-            clock.tick(100)
+                    running = False
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        paused = not paused 
+                    elif event.key == pygame.K_UP:
+                        frame_rate = min(60, frame_rate + 5) 
+                    elif event.key == pygame.K_DOWN:
+                        frame_rate = max(5, frame_rate - 5) 
+
+            if not paused:
+                self.update_world()
+                self.screen.fill((0, 0, 0))
+                self.draw_world(self.screen)
+                pygame.display.flip()
+
+            clock.tick(frame_rate) 
+
+        pygame.quit()
+        sys.exit()
 
 

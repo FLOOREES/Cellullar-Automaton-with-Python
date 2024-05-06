@@ -5,11 +5,9 @@ import scipy.ndimage as ndimage
 
 def generate_bioma(width, height): 
 
-    # Dimensiones de cada sección
     section_width = width // 4
     section_height = height // 4
 
-    # Crear una matriz vacía para el mapa de biomas
     bioma_layer = np.empty((height, width), dtype=object)
 
     for i in range(4):
@@ -19,7 +17,6 @@ def generate_bioma(width, height):
                 for sub_j in range(j*section_width, (j+1)*section_width):
                     bioma_layer[sub_i, sub_j] = chosen_bioma
 
-    # Guardar la matriz de biomas en un archivo, una celda por línea
     with open('assets/Biomas.img', 'w') as file:
         for y in range(height):
             for x in range(width):
@@ -58,7 +55,6 @@ def generate_vegetacion_humedad(width,height,lake_centers,max_humidity, bioma_la
                 if (i-y)**2 + (j-x)**2 <= radius**2:
                     matrix[i, j] = value
 
-    #asignamos un valor a la vegetación en función del bioma
     vegetation = np.zeros((height, width), dtype=int)
     for i in range(height):
         for j in range(width):
@@ -74,14 +70,12 @@ def generate_vegetacion_humedad(width,height,lake_centers,max_humidity, bioma_la
         file.write(f"rows        : {HEIGHT}\n")
         file.write(f"Columns     : {WIDTH}\n")
     
-    #hacemos lo mismo con la humedad
     humidity = np.zeros((height, width), dtype=int)
     for i in range(height):
         for j in range(width):
             bioma = BIOMAS[bioma_layer[i,j]]
             humidity[i,j] = np.random.randint(bioma['humedad'][0],bioma['humedad'][1])
     
-    #añadimos los lagos
     for _ in range(lake_centers):
         cx, cy = np.random.randint(0, width), np.random.randint(0, height)
         radius = np.random.randint(5, 15)  
@@ -98,10 +92,6 @@ def generate_vegetacion_humedad(width,height,lake_centers,max_humidity, bioma_la
         file.write(f"rows        : {HEIGHT}\n")
         file.write(f"Columns     : {WIDTH}\n")
 
-#crear archivos
 generate_fire(WIDTH, HEIGHT, NUM_FIRE_STARTS)
 bioma_layer = generate_bioma(WIDTH, HEIGHT)
 generate_vegetacion_humedad(WIDTH, HEIGHT,LAKE_CENTERS,MAX_HUMIDITY,bioma_layer)
-
-#generate_humidity(WIDTH, HEIGHT,LAKE_CENTERS,MAX_HUMIDITY)
-#generate_vegetacion(WIDTH, HEIGHT)

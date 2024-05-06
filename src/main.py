@@ -23,7 +23,6 @@ def leer_capa(filename, rows, cols, bioma = False):
     return matrix
 
 
-#Initialization
 width,height = leer_doc('assets/Vegetacion.doc')
 fire_state = leer_capa('assets/Fuego.img',height,width)
 bioma = leer_capa('assets/Biomas.img',height,width, bioma=True)
