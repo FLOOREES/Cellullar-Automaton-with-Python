@@ -29,6 +29,7 @@ bioma = leer_capa('assets/Biomas.img',height,width, bioma=True)
 humidity = leer_capa('assets/Humedad.img',height,width)
 vegetation = leer_capa('assets/Vegetacion.img',height,width)
 
+# Ejemplo de simulación
 sim = Incendi_Forestal(width,height, CELL_SIZE, fire_state, vegetation, humidity,bioma)
-sim.run_simulation(num_iterations=100)
+sim.run_simulation(num_iterations=500)
 
