@@ -33,9 +33,12 @@ Para configurar y ejecutar el proyecto en tu entorno local, sigue estos pasos:
    cd tu-repositorio
 
 2. **Instala las dependencias**:
-  pip install pygame numpy
+   ```bash
+   pip install pygame numpy
+   
 3. **Ejecuta la simulación**:
-  python main.py
+   ```bash
+   python main.py
 
 ## Contribuciones
 Las contribuciones son siempre bienvenidas. Si deseas contribuir al proyecto, puedes empezar por clonar este repositorio, hacer tus cambios y enviar un pull request. Nos esforzamos por mantener un entorno inclusivo y colaborativo. Por favor, asegúrate de seguir las directrices de contribución y conducta.
